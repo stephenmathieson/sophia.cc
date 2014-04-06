@@ -10,6 +10,10 @@ main(void) {
   sophia::SophiaReturnCode rc;
 
   assert(0 == sp->Open());
+  assert(true == sp->IsOpen());
+  assert(0 == sp->Close());
+  assert(false == sp->IsOpen());
+  assert(0 == sp->Open());
 
   for (int i = 0; i < 100; i++) {
     char key[100];

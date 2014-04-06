@@ -112,6 +112,13 @@ class Sophia {
     ~Sophia();
 
     /**
+     * Check if the db is open.
+     */
+
+    bool
+    IsOpen();
+
+    /**
      * Open/create the database.
      */
 
@@ -211,6 +218,12 @@ class Sophia {
     Clear();
 
   private:
+
+    /**
+     * Open flag.
+     */
+
+    bool open;
 
     /**
      * Path to db.

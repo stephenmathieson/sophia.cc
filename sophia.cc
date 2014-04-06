@@ -10,12 +10,18 @@ namespace sophia {
     env = NULL;
     db = NULL;
     cursor = NULL;
+    open = false;
   }
 
   Sophia::~Sophia() {
     if (cursor) sp_destroy(cursor);
     if (db) sp_destroy(db);
     if (env) sp_destroy(env);
+  }
+
+  bool
+  Sophia::IsOpen() {
+    return open;
   }
 
   SophiaReturnCode
@@ -66,11 +72,16 @@ namespace sophia {
       return SOPHIA_ENV_ERROR;
     }
 
+    open = true;
+
     return SOPHIA_SUCCESS;
   }
 
   SophiaReturnCode
   Sophia::Close() {
+    // noop if we're already closed
+    if (!open) return SOPHIA_SUCCESS;
+
     // TODO: should we fail if a cursor is open at this time?
     if (cursor && -1 == sp_destroy(cursor)) {
       return SOPHIA_DESTROY_ERROR;
@@ -86,6 +97,8 @@ namespace sophia {
       return SOPHIA_DESTROY_ERROR;
     }
     env = NULL;
+
+    open = false;
 
     return SOPHIA_SUCCESS;
   }
