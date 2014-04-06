@@ -121,6 +121,7 @@ class Sophia {
       , bool read_only = false
       , int page_size = 2048
       , int merge_watermark = 100000
+      , bool gc = true
     );
 
     /**

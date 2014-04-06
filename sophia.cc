@@ -24,6 +24,7 @@ namespace sophia {
     , bool read_only
     , int page_size
     , int merge_watermark
+    , bool gc
   ) {
     int rc;
     uint32_t flags = 0;
@@ -45,7 +46,7 @@ namespace sophia {
       return SOPHIA_OPEN_ERROR;
     }
 
-    if (-1 == sp_ctl(env, SPGC, 1)) {
+    if (gc && -1 == sp_ctl(env, SPGC, 1)) {
       free(env);
       return SOPHIA_GC_ERROR;
     }
