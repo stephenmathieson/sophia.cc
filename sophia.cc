@@ -2,7 +2,7 @@
 #include <sophia.h>
 #include <string.h>
 #include <stdlib.h>
-#include "sophia.h"
+#include "sophia-cc.h"
 
 namespace sophia {
 

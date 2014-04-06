@@ -1,5 +1,5 @@
 
-#include "sophia.h"
+#include "sophia-cc.h"
 #include <assert.h>
 #include <string.h>
 #include <stdio.h>
