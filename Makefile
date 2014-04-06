@@ -8,8 +8,8 @@ VALGRIND_OPTS ?= --leak-check=full
 LIST_SRC = $(wildcard deps/list/*.c)
 LIST_OBJS = $(LIST_SRC:.c=.o)
 
-LDFLAGS += -lsophia -pthread
-CPPFLAGS += -Ideps/list
+LDFLAGS ?= -lsophia -pthread
+CPPFLAGS ?= -Ideps/list
 CFLAGS = -std=c99
 
 TEST_MAIN ?= sophia-test
@@ -36,7 +36,7 @@ travis:
 	git clone --depth=1 https://github.com/pmwkaa/sophia.git sophia
 	$(MAKE) -C sophia/db
 	rm -f sophia/db/*.so*
-	CPPFLAGS="-Isophia/db" LIBRARY_PATH="./sophia/db" $(MAKE) test
+	CPPFLAGS="-Ideps/list -Isophia/db" LIBRARY_PATH="./sophia/db" $(MAKE) test
 
 clean:
 	rm -f sophia.o test.o $(TEST_MAIN) $(LIST_OBJS)
