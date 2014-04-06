@@ -1,0 +1,4 @@
+*.o
+test
+testdb/
+sophia-test
