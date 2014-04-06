@@ -36,7 +36,7 @@ travis:
 	git clone --depth=1 https://github.com/pmwkaa/sophia.git sophia
 	$(MAKE) -C sophia/db
 	rm -f sophia/db/*.so*
-	CFLAGS="-Isophia/db" LIBRARY_PATH="./sophia/db" $(MAKE) test
+	CPPFLAGS="-Isophia/db" LIBRARY_PATH="./sophia/db" $(MAKE) test
 
 clean:
 	rm -f sophia.o test.o $(TEST_MAIN) $(LIST_OBJS)
