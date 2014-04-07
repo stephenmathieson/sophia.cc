@@ -9,7 +9,7 @@ LIST_SRC = $(wildcard deps/list/*.c)
 LIST_OBJS = $(LIST_SRC:.c=.o)
 
 LDFLAGS ?= -lsophia -pthread
-CPPFLAGS ?= -Ideps/list
+CPPFLAGS ?= -Ideps/list -Wall -Wextra
 CFLAGS = -std=c99
 
 TEST_MAIN ?= sophia-test

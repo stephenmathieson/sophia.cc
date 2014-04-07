@@ -318,8 +318,8 @@ TEST(Transaction, Commit) {
   assert(SOPHIA_SUCCESS == sp->Clear());
   assert(SOPHIA_SUCCESS == t->Begin());
 
-  int sets = 0;
-  int dels = 0;
+  size_t sets = 0;
+  size_t dels = 0;
 
   for (int i = 0; i < 10000; i++) {
     char key[100];

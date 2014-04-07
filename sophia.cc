@@ -32,7 +32,6 @@ namespace sophia {
     , int merge_watermark
     , bool gc
   ) {
-    int rc;
     uint32_t flags = 0;
 
     if (!(env = sp_env())) {
@@ -225,7 +224,7 @@ namespace sophia {
 
     cursor = NULL;
 
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < (int) count; i++) {
       rc = Delete(keys[i].key, keys[i].size);
       if (SOPHIA_SUCCESS != rc) return rc;
     }
@@ -276,6 +275,7 @@ namespace sophia {
         }
         return err;
     }
+    return NULL;
   }
 
   /**
