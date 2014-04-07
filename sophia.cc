@@ -235,6 +235,7 @@ namespace sophia {
 
   const char *
   Sophia::Error(SophiaReturnCode rc) {
+    char *err = NULL;
     switch (rc) {
       case SOPHIA_SUCCESS:
         return NULL;
@@ -262,9 +263,15 @@ namespace sophia {
         return "Transaction not open";
 
       case SOPHIA_ENV_ERROR:
-        return sp_error(env);
+	if (!env || !(err = sp_error(env))) {
+	  return "Unknown environment error";
+	}
+	return err;
       case SOPHIA_DB_ERROR:
-        return sp_error(db);
+	if (!db || !(err = sp_error(db))) {
+	  return "Unknown database error";
+	}
+	return err;
     }
   }
 
