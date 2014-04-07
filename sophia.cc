@@ -263,18 +263,18 @@ namespace sophia {
         return "Transaction not open";
 
       case SOPHIA_DATABASE_NOT_OPEN_ERROR:
-	return "Database not open";
+        return "Database not open";
 
       case SOPHIA_ENV_ERROR:
-	if (!env || !(err = sp_error(env))) {
-	  return "Unknown environment error";
-	}
-	return err;
+        if (!env || !(err = sp_error(env))) {
+          return "Unknown environment error";
+        }
+        return err;
       case SOPHIA_DB_ERROR:
-	if (!db || !(err = sp_error(db))) {
-	  return "Unknown database error";
-	}
-	return err;
+        if (!db || !(err = sp_error(db))) {
+          return "Unknown database error";
+        }
+        return err;
     }
   }
 
@@ -448,7 +448,7 @@ namespace sophia {
     , sporder order
     , const char *start
   ) : sp(sp), order(order), start(start) {
-    startsize = strlen(start) + 1;
+    startsize = start ? strlen(start) + 1 : 0;
     end = NULL;
     endsize = 0;
   }
@@ -469,7 +469,7 @@ namespace sophia {
     , const char *start
     , const char *end
   ) : sp(sp), order(order), start(start), end(end) {
-    startsize = strlen(start) + 1;
+    startsize = start ? strlen(start) + 1 : 0;
     endsize = strlen(end) + 1;
     end = NULL;
     endsize = 0;
