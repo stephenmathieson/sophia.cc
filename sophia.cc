@@ -164,7 +164,7 @@ namespace sophia {
     size_t count = 0;
 
     if (cursor) {
-      return SOPHIA_CURSOR_ALREADY_OPEN;
+      return SOPHIA_CURSOR_ALREADY_OPEN_ERROR;
     }
 
     cursor = sp_cursor(db, SPGT, NULL, 0);
@@ -251,14 +251,14 @@ namespace sophia {
         return "Failed to set page size";
       case SOPHIA_DESTROY_ERROR:
         return "Failed to destroy environment";
-      case SOPHIA_CURSOR_ALREADY_OPEN:
+      case SOPHIA_CURSOR_ALREADY_OPEN_ERROR:
         return "An existing cursor is open";
 
       case SOPHIA_TRANSACTION_ALLOC_ERROR:
         return "Failed to allocate transaction operation";
       case SOPHIA_TRANSACTION_OPERATION_ERROR:
         return "Failed to add operation to transaction stack";
-      case SOPHIA_TRANSACTION_NOT_OPEN:
+      case SOPHIA_TRANSACTION_NOT_OPEN_ERROR:
         return "Transaction not open";
 
       case SOPHIA_ENV_ERROR:
@@ -347,7 +347,7 @@ namespace sophia {
   SophiaReturnCode
   Transaction::AddOperation(TransactionOperation *operation) {
     // cannot write to a committed/bad transaction
-    if (!operations) return SOPHIA_TRANSACTION_NOT_OPEN;
+    if (!operations) return SOPHIA_TRANSACTION_NOT_OPEN_ERROR;
 
     list_node_t *node = list_node_new(operation);
     if (!node) return SOPHIA_TRANSACTION_ALLOC_ERROR;
@@ -489,15 +489,9 @@ namespace sophia {
 
   SophiaReturnCode
   Iterator::Begin() {
-    if (sp->cursor) {
-      return SOPHIA_CURSOR_ALREADY_OPEN;
-    }
-
+    if (sp->cursor) return SOPHIA_CURSOR_ALREADY_OPEN_ERROR;
     sp->cursor = sp_cursor(sp->db, order, start, startsize);
-    if (NULL == sp->cursor) {
-      return SOPHIA_DB_ERROR;
-    }
-
+    if (NULL == sp->cursor) return SOPHIA_DB_ERROR;
     return SOPHIA_SUCCESS;
   }
 
