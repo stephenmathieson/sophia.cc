@@ -61,7 +61,7 @@ TEST(Sophia, Get) {
     sprintf(value, "value%03d", i);
     char *_actual = sp->Get(key);
     assert(0 == strcmp(value, _actual));
-    delete _actual;
+    free(_actual);
   }
 
   assert(NULL == sp->Get("asdf"));
