@@ -17,6 +17,18 @@ using namespace sophia;
   Test##suite##test(); \
   printf("    \e[92m✓ \e[90m"#suite "::" #test "\e[0m\n");
 
+#define SOPHIA_ASSERT(rc) \
+  if (SOPHIA_SUCCESS != rc) { \
+    fprintf( \
+        stderr \
+      , "Error: %s (%d / %s at line %d)\n" \
+      , sp->Error(rc) \
+      , rc \
+      , __PRETTY_FUNCTION__ \
+      , __LINE__ \
+    ); \
+    exit(1); \
+  }
 
 /**
  * Sophia tests.
@@ -24,23 +36,23 @@ using namespace sophia;
 
 TEST(Sophia, Set) {
   Sophia *sp = new Sophia("testdb");
-  assert(SOPHIA_SUCCESS == sp->Open());
+  SOPHIA_ASSERT(sp->Open());
 
   for (int i = 0; i < 100; i++) {
     char key[100];
     char value[100];
     sprintf(key, "key%03d", i);
     sprintf(value, "value%03d", i);
-    assert(SOPHIA_SUCCESS == sp->Set(key, value));
+    SOPHIA_ASSERT(sp->Set(key, value));
   }
 
-  assert(SOPHIA_SUCCESS == sp->Close());
+  SOPHIA_ASSERT(sp->Close());
   delete sp;
 }
 
 TEST(Sophia, Get) {
   Sophia *sp = new Sophia("testdb");
-  assert(SOPHIA_SUCCESS == sp->Open());
+  SOPHIA_ASSERT(sp->Open());
 
   for (int i = 0; i < 100; i++) {
     char key[100];
@@ -55,22 +67,22 @@ TEST(Sophia, Get) {
   assert(NULL == sp->Get("asdf"));
   assert(NULL == sp->Get("lkjh"));
 
-  assert(SOPHIA_SUCCESS == sp->Close());
+  SOPHIA_ASSERT(sp->Close());
   delete sp;
 }
 
 TEST(Sophia, Delete) {
   Sophia *sp = new Sophia("testdb");
-  assert(SOPHIA_SUCCESS == sp->Open());
+  SOPHIA_ASSERT(sp->Open());
 
   for (int i = 0; i < 100; i += 2) {
     char key[100];
     sprintf(key, "key%03d", i);
-    assert(SOPHIA_SUCCESS == sp->Delete(key));
+    SOPHIA_ASSERT(sp->Delete(key));
     assert(NULL == sp->Get(key));
   }
 
-  assert(SOPHIA_SUCCESS == sp->Close());
+  SOPHIA_ASSERT(sp->Close());
   delete sp;
 }
 
@@ -90,9 +102,9 @@ TEST(Sophia, Error) {
 TEST(Sophia, IsOpen) {
   Sophia *sp = new Sophia("testdb");
 
-  assert(SOPHIA_SUCCESS == sp->Open());
+  SOPHIA_ASSERT(sp->Open());
   assert(true == sp->IsOpen());
-  assert(SOPHIA_SUCCESS == sp->Close());
+  SOPHIA_ASSERT(sp->Close());
   assert(false == sp->IsOpen());
 
   delete sp;
@@ -100,34 +112,34 @@ TEST(Sophia, IsOpen) {
 
 TEST(Sophia, Clear) {
   Sophia *sp = new Sophia("testdb");
-  assert(SOPHIA_SUCCESS == sp->Open());
-  assert(SOPHIA_SUCCESS == sp->Clear());
+  SOPHIA_ASSERT(sp->Open());
+  SOPHIA_ASSERT(sp->Clear());
   for (int i = 0; i < 100; i++) {
     char key[100];
     sprintf(key, "key%03d", i);
     assert(NULL == sp->Get(key));
   }
-  assert(SOPHIA_SUCCESS == sp->Close());
+  SOPHIA_ASSERT(sp->Close());
   delete sp;
 }
 
 TEST(Sophia, Count) {
   Sophia *sp = new Sophia("testdb");
-  assert(SOPHIA_SUCCESS == sp->Open());
+  SOPHIA_ASSERT(sp->Open());
 
   for (int i = 0; i < 5000; i++) {
     char key[100];
     char value[100];
     sprintf(key, "key%05d", i);
     sprintf(value, "value%05d", i);
-    assert(SOPHIA_SUCCESS == sp->Set(key, value));
+    SOPHIA_ASSERT(sp->Set(key, value));
   }
 
   size_t count;
-  assert(SOPHIA_SUCCESS == sp->Count(&count));
+  SOPHIA_ASSERT(sp->Count(&count));
   assert(5000 == count);
 
-  assert(SOPHIA_SUCCESS == sp->Close());
+  SOPHIA_ASSERT(sp->Close());
   delete sp;
 }
 
@@ -144,38 +156,38 @@ TEST(Iterator, Begin) {
   assert(SOPHIA_DATABASE_NOT_OPEN_ERROR == it->Begin());
   delete it;
 
-  assert(SOPHIA_SUCCESS == sp->Open());
+  SOPHIA_ASSERT(sp->Open());
 
   // test reverse
 
   it = new Iterator(sp, SPLT);
-  assert(SOPHIA_SUCCESS == it->Begin());
+  SOPHIA_ASSERT(it->Begin());
 
   res = it->Next();
   assert(0 == strcmp("key04999", res->key));
   assert(0 == strcmp("value04999", res->value));
   delete res;
 
-  assert(SOPHIA_SUCCESS == it->End());
+  SOPHIA_ASSERT(it->End());
   delete it;
 
   // test start
 
   it = new Iterator(sp, SPGT, "key03999");
-  assert(SOPHIA_SUCCESS == it->Begin());
+  SOPHIA_ASSERT(it->Begin());
 
   res = it->Next();
   assert(0 == strcmp("key04000", res->key));
   assert(0 == strcmp("value04000", res->value));
 
   delete res;
-  assert(SOPHIA_SUCCESS == it->End());
+  SOPHIA_ASSERT(it->End());
   delete it;
 
   // test start/end
 
   it = new Iterator(sp, SPGT, "key03999", "key04001");
-  assert(SOPHIA_SUCCESS == it->Begin());
+  SOPHIA_ASSERT(it->Begin());
 
   res = it->Next();
   assert(0 == strcmp("key04000", res->key));
@@ -183,13 +195,13 @@ TEST(Iterator, Begin) {
   delete res;
 
   assert(NULL == it->Next());
-  assert(SOPHIA_SUCCESS == it->End());
+  SOPHIA_ASSERT(it->End());
   delete it;
 
   // test end
 
   it = new Iterator(sp, SPGT, NULL, "key00002");
-  assert(SOPHIA_SUCCESS == it->Begin());
+  SOPHIA_ASSERT(it->Begin());
   res = it->Next();
   assert(0 == strcmp("key00000", res->key));
   assert(0 == strcmp("value00000", res->value));
@@ -201,10 +213,10 @@ TEST(Iterator, Begin) {
   delete res;
 
   assert(NULL == it->Next());
-  assert(SOPHIA_SUCCESS == it->End());
+  SOPHIA_ASSERT(it->End());
   delete it;
 
-  assert(SOPHIA_SUCCESS == sp->Close());
+  SOPHIA_ASSERT(sp->Close());
   delete sp;
 }
 
@@ -214,7 +226,7 @@ TEST(Iterator, Next) {
   IteratorResult *res = NULL;
   int i = 0;
 
-  assert(SOPHIA_SUCCESS == sp->Open());
+  SOPHIA_ASSERT(sp->Open());
   it = new Iterator(sp, SPGT, "key00100", "key00500");
 
   assert(0 == it->Begin());
@@ -234,10 +246,10 @@ TEST(Iterator, Next) {
   }
 
   assert(499 == i);
-  assert(SOPHIA_SUCCESS == it->End());
+  SOPHIA_ASSERT(it->End());
   delete it;
 
-  assert(SOPHIA_SUCCESS == sp->Close());
+  SOPHIA_ASSERT(sp->Close());
   delete sp;
 }
 
@@ -252,71 +264,71 @@ TEST(Transaction, Begin) {
 
   assert(SOPHIA_DATABASE_NOT_OPEN_ERROR == t->Begin());
 
-  assert(SOPHIA_SUCCESS == sp->Open());
-  assert(SOPHIA_SUCCESS == sp->Clear());
+  SOPHIA_ASSERT(sp->Open());
+  SOPHIA_ASSERT(sp->Clear());
 
-  assert(SOPHIA_SUCCESS == t->Begin());
-  assert(SOPHIA_SUCCESS == t->Rollback());
+  SOPHIA_ASSERT(t->Begin());
+  SOPHIA_ASSERT(t->Rollback());
   delete t;
 
-  assert(SOPHIA_SUCCESS == sp->Close());
+  SOPHIA_ASSERT(sp->Close());
   delete sp;
 }
 
 TEST(Transaction, Set) {
   Sophia *sp = new Sophia("testdb");
   Transaction *t = new Transaction(sp);
-  assert(SOPHIA_SUCCESS == sp->Open());
-  assert(SOPHIA_SUCCESS == t->Begin());
+  SOPHIA_ASSERT(sp->Open());
+  SOPHIA_ASSERT(t->Begin());
 
   for (int i = 0; i < 5000; i++) {
     char key[100];
     char value[100];
     sprintf(key, "key%05d", i);
     sprintf(value, "value%05d", i);
-    assert(SOPHIA_SUCCESS == t->Set(key, value));
+    SOPHIA_ASSERT(t->Set(key, value));
   }
 
-  assert(SOPHIA_SUCCESS == t->Commit());
+  SOPHIA_ASSERT(t->Commit());
   delete t;
 
   size_t count;
-  assert(SOPHIA_SUCCESS == sp->Count(&count));
+  SOPHIA_ASSERT(sp->Count(&count));
   assert(5000 == count);
 
-  assert(SOPHIA_SUCCESS == sp->Close());
+  SOPHIA_ASSERT(sp->Close());
   delete sp;
 }
 
 TEST(Transaction, Delete) {
   Sophia *sp = new Sophia("testdb");
   Transaction *t = new Transaction(sp);
-  assert(SOPHIA_SUCCESS == sp->Open());
-  assert(SOPHIA_SUCCESS == t->Begin());
+  SOPHIA_ASSERT(sp->Open());
+  SOPHIA_ASSERT(t->Begin());
 
   for (int i = 0; i < 5000; i += 2) {
     char key[100];
     sprintf(key, "key%05d", i);
-    assert(SOPHIA_SUCCESS == t->Delete(key));
+    SOPHIA_ASSERT(t->Delete(key));
   }
 
-  assert(SOPHIA_SUCCESS == t->Commit());
+  SOPHIA_ASSERT(t->Commit());
   delete t;
 
   size_t count;
-  assert(SOPHIA_SUCCESS == sp->Count(&count));
+  SOPHIA_ASSERT(sp->Count(&count));
   assert(2500 == count);
 
-  assert(SOPHIA_SUCCESS == sp->Close());
+  SOPHIA_ASSERT(sp->Close());
   delete sp;
 }
 
 TEST(Transaction, Commit) {
   Sophia *sp = new Sophia("testdb");
   Transaction *t = new Transaction(sp);
-  assert(SOPHIA_SUCCESS == sp->Open());
-  assert(SOPHIA_SUCCESS == sp->Clear());
-  assert(SOPHIA_SUCCESS == t->Begin());
+  SOPHIA_ASSERT(sp->Open());
+  SOPHIA_ASSERT(sp->Clear());
+  SOPHIA_ASSERT(t->Begin());
 
   size_t sets = 0;
   size_t dels = 0;
@@ -329,21 +341,21 @@ TEST(Transaction, Commit) {
 
     int n = (rand() % 3) + 1;
     if (2 == n) {
-      assert(SOPHIA_SUCCESS == t->Delete(key));
+      SOPHIA_ASSERT(t->Delete(key));
       dels++;
     } else {
-      assert(SOPHIA_SUCCESS == t->Set(key, value));
+      SOPHIA_ASSERT(t->Set(key, value));
       sets++;
     }
   }
 
-  assert(SOPHIA_SUCCESS == t->Commit());
+  SOPHIA_ASSERT(t->Commit());
 
   size_t count;
-  assert(SOPHIA_SUCCESS == sp->Count(&count));
+  SOPHIA_ASSERT(sp->Count(&count));
   assert(sets == count);
 
-  assert(SOPHIA_SUCCESS == sp->Close());
+  SOPHIA_ASSERT(sp->Close());
   delete sp;
 }
 
