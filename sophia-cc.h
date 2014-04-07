@@ -96,10 +96,10 @@ class Sophia {
     void *env;
 
     /**
-     * Sophia cursor.
+     * Sophia cursors.
      */
 
-    void *cursor;
+    list_t *cursors;
 
     /**
      * Create a new Sophia instance for db `path`.
@@ -386,11 +386,52 @@ class Iterator {
 
   private:
 
+    /**
+     * Owner Sophia instance.
+     */
+
     Sophia *sp;
+
+    /**
+     * Iterator order.
+     */
+
     sporder order;
+
+    /**
+     * Cursor.
+     */
+
+    void *cursor;
+
+    /**
+     * Cursor node in Sophia's list.
+     */
+
+    list_node_t *cursor_node;
+
+    /**
+     * Start key.
+     */
+
     const char *start;
+
+    /**
+     * Start keysize.
+     */
+
     size_t startsize;
+
+    /**
+     * End key.
+     */
+
     const char *end;
+
+    /**
+     * End keysize.
+     */
+
     size_t endsize;
 };
 

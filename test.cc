@@ -223,6 +223,7 @@ TEST(Iterator, Begin) {
 TEST(Iterator, Next) {
   Sophia *sp = new Sophia("testdb");
   Iterator *it = NULL;
+  Iterator *it2 = NULL;
   IteratorResult *res = NULL;
   int i = 0;
 
@@ -248,6 +249,27 @@ TEST(Iterator, Next) {
   assert(499 == i);
   SOPHIA_ASSERT(it->End());
   delete it;
+
+  // multiple iterators
+
+  it = new Iterator(sp, SPGT, "key00000", "key00100");
+  it2 = new Iterator(sp, SPLT, "key00100", "key00000");
+
+  SOPHIA_ASSERT(it->Begin());
+  SOPHIA_ASSERT(it2->Begin());
+
+  res = it->Next();
+  assert(0 == strcmp("key00001", res->key));
+  assert(0 == strcmp("value00001", res->value));
+  delete res;
+
+  res = it2->Next();
+  assert(0 == strcmp("key00099", res->key));
+  assert(0 == strcmp("value00099", res->value));
+  delete res;
+
+  SOPHIA_ASSERT(it->End());
+  SOPHIA_ASSERT(it2->End());
 
   SOPHIA_ASSERT(sp->Close());
   delete sp;
