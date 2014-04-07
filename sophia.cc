@@ -262,6 +262,9 @@ namespace sophia {
       case SOPHIA_TRANSACTION_NOT_OPEN_ERROR:
         return "Transaction not open";
 
+      case SOPHIA_DATABASE_NOT_OPEN_ERROR:
+	return "Database not open";
+
       case SOPHIA_ENV_ERROR:
 	if (!env || !(err = sp_error(env))) {
 	  return "Unknown environment error";
@@ -305,9 +308,8 @@ namespace sophia {
 
   SophiaReturnCode
   Transaction::Begin() {
-    if (-1 == sp_begin(sp->db)) {
-      return SOPHIA_DB_ERROR;
-    }
+    if (!sp->IsOpen()) return SOPHIA_DATABASE_NOT_OPEN_ERROR;
+    if (-1 == sp_begin(sp->db)) return SOPHIA_DB_ERROR;
     return SOPHIA_SUCCESS;
   }
 
@@ -496,6 +498,7 @@ namespace sophia {
 
   SophiaReturnCode
   Iterator::Begin() {
+    if (!sp->IsOpen()) return SOPHIA_DATABASE_NOT_OPEN_ERROR;
     if (sp->cursor) return SOPHIA_CURSOR_ALREADY_OPEN_ERROR;
     sp->cursor = sp_cursor(sp->db, order, start, startsize);
     if (NULL == sp->cursor) return SOPHIA_DB_ERROR;
