@@ -8,7 +8,7 @@ VALGRIND_OPTS ?= --leak-check=full
 LIST_SRC = $(wildcard deps/list/*.c)
 LIST_OBJS = $(LIST_SRC:.c=.o)
 
-LDFLAGS ?= -lsophia -pthread
+LDFLAGS ?= -lsophia
 CPPFLAGS ?= -Ideps/list -Wall -Wextra
 CFLAGS = -std=c99
 
