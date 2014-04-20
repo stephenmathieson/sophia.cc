@@ -63,15 +63,6 @@ typedef struct {
   const char *value;
 } IteratorResult;
 
-/**
- * Iterator direction.
- */
-
-typedef enum {
-    ITERATOR_FORWARD = 0
-  , ITERATOR_REVERSE = 1
-} IteratorDirection;
-
 // forward defs
 class Transaction;
 class Iterator;
