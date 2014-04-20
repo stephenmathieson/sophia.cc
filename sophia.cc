@@ -117,6 +117,7 @@ Sophia::Set(
   , const char *value
   , size_t valuesize
 ) {
+  if (!IsOpen()) return SOPHIA_DATABASE_NOT_OPEN_ERROR;
   if (-1 == sp_set(db, key, keysize, value, valuesize)) {
     return SOPHIA_DB_ERROR;
   }
@@ -136,6 +137,8 @@ Sophia::Get(const char *key, size_t keysize) {
   char *value = NULL;
   size_t valuesize;
 
+  if (!IsOpen()) return NULL;
+
   if (-1 == sp_get(db, key, keysize, &ref, &valuesize)) {
     return NULL;
   }
@@ -154,6 +157,7 @@ Sophia::Get(const char *key) {
 
 SophiaReturnCode
 Sophia::Delete(const char *key, size_t keysize) {
+  if (!IsOpen()) return SOPHIA_DATABASE_NOT_OPEN_ERROR;
   if (-1 == sp_delete(db, key, keysize)) {
     return SOPHIA_DB_ERROR;
   }
@@ -170,6 +174,8 @@ SophiaReturnCode
 Sophia::Count(size_t *n) {
   size_t count = 0;
   list_node_t *cursor_node = NULL;
+
+  if (!IsOpen()) return SOPHIA_DATABASE_NOT_OPEN_ERROR;
 
   void *cursor = sp_cursor(db, SPGT, NULL, 0);
   if (NULL == cursor) {
@@ -206,6 +212,8 @@ Sophia::Clear() {
   size_t count;
   void *cursor = NULL;
   list_node_t *cursor_node = NULL;
+
+  if (!IsOpen()) return SOPHIA_DATABASE_NOT_OPEN_ERROR;
 
   rc = Count(&count);
   if (SOPHIA_SUCCESS != rc) {

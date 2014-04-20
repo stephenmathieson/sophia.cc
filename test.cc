@@ -36,6 +36,9 @@ using namespace sophia;
 
 TEST(Sophia, Set) {
   Sophia *sp = new Sophia("testdb");
+  // shouldn't segfault
+  assert(SOPHIA_DATABASE_NOT_OPEN_ERROR == sp->Set("foo", "bar"));
+
   SOPHIA_ASSERT(sp->Open());
 
   for (int i = 0; i < 100; i++) {
@@ -52,6 +55,9 @@ TEST(Sophia, Set) {
 
 TEST(Sophia, Get) {
   Sophia *sp = new Sophia("testdb");
+  // shouldn't segfault
+  assert(!sp->Get("foo"));
+
   SOPHIA_ASSERT(sp->Open());
 
   for (int i = 0; i < 100; i++) {
@@ -73,6 +79,8 @@ TEST(Sophia, Get) {
 
 TEST(Sophia, Delete) {
   Sophia *sp = new Sophia("testdb");
+  // shouldn't segfault
+  assert(SOPHIA_DATABASE_NOT_OPEN_ERROR == sp->Delete("foo"));
   SOPHIA_ASSERT(sp->Open());
 
   for (int i = 0; i < 100; i += 2) {
@@ -112,6 +120,8 @@ TEST(Sophia, IsOpen) {
 
 TEST(Sophia, Clear) {
   Sophia *sp = new Sophia("testdb");
+  // shouldn't segfault
+  assert(SOPHIA_DATABASE_NOT_OPEN_ERROR == sp->Clear());
   SOPHIA_ASSERT(sp->Open());
   SOPHIA_ASSERT(sp->Clear());
   for (int i = 0; i < 100; i++) {
@@ -125,6 +135,11 @@ TEST(Sophia, Clear) {
 
 TEST(Sophia, Count) {
   Sophia *sp = new Sophia("testdb");
+  size_t count;
+
+  // shouldn't segfault
+  assert(SOPHIA_DATABASE_NOT_OPEN_ERROR == sp->Count(&count));
+
   SOPHIA_ASSERT(sp->Open());
 
   for (int i = 0; i < 5000; i++) {
@@ -135,7 +150,6 @@ TEST(Sophia, Count) {
     SOPHIA_ASSERT(sp->Set(key, value));
   }
 
-  size_t count;
   SOPHIA_ASSERT(sp->Count(&count));
   assert(5000 == count);
 
