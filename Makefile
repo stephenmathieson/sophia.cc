@@ -5,12 +5,18 @@ CXX ?= g++
 VALGRIND ?= valgrind
 VALGRIND_OPTS ?= --leak-check=full
 
+OS = $(shell uname)
+
 LIST_SRC = $(wildcard deps/list/*.c)
 LIST_OBJS = $(LIST_SRC:.c=.o)
 
 LDFLAGS ?= -lsophia
 CPPFLAGS ?= -Ideps/list -Wall -Wextra
 CFLAGS = -std=c99
+
+ifeq ($(OS), Linux)
+	LDFLAGS += -pthread
+endif
 
 TEST_MAIN ?= sophia-test
 
@@ -39,7 +45,7 @@ travis:
 	CPPFLAGS="-Ideps/list -Isophia/db" LIBRARY_PATH="./sophia/db" $(MAKE) test
 
 clean:
-	rm -f sophia.o test.o $(TEST_MAIN) $(LIST_OBJS)
+	rm -f *.o $(TEST_MAIN) $(LIST_OBJS)
 	rm -rf testdb
 
 .PHONY: clean check
