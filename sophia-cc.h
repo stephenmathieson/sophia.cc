@@ -33,26 +33,8 @@ typedef enum {
   , SOPHIA_DB_ERROR = -300
 } SophiaReturnCode;
 
-/**
- * Operation types.
- */
-
-typedef enum {
-    TRANSACTION_OPERATION_SET = 0
-  , TRANSACTION_OPERATION_DELETE = 1
-} TransactionOperationType;
-
-/**
- * Operation.
- */
-
-typedef struct {
-  char *key;
-  size_t keysize;
-  char *value;
-  size_t valuesize;
-  TransactionOperationType type;
-} TransactionOperation;
+// forward def
+typedef struct TransactionOperation TransactionOperation;
 
 /**
  * Iterator->Next() result.

@@ -7,6 +7,27 @@
 namespace sophia {
 
 /**
+ * Operation types.
+ */
+
+typedef enum {
+    TRANSACTION_OPERATION_SET = 0
+  , TRANSACTION_OPERATION_DELETE = 1
+} TransactionOperationType;
+
+/**
+ * Operation.
+ */
+
+struct TransactionOperation {
+  char *key;
+  size_t keysize;
+  char *value;
+  size_t valuesize;
+  TransactionOperationType type;
+};
+
+/**
  * Cursor list `free` callback.
  */
 
